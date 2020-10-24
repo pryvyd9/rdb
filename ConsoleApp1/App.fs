@@ -2,7 +2,7 @@
 
 open System
 open Avalonia;
-open Avalonia.Logging.Serilog;
+open Avalonia.Logging;
 open Avalonia.Controls.ApplicationLifetimes;
 open Avalonia.Markup.Xaml;
 open Avalonia.Controls

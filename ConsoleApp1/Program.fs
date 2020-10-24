@@ -1,10 +1,10 @@
 ﻿open ConsoleApp1
 open Avalonia;
-open Avalonia.Logging.Serilog;
+//open Avalonia.Logging.Serilog;
 
 [<EntryPoint>]
 let main argv =
-    AppBuilder.Configure<App>().UsePlatformDetect().LogToDebug().StartWithClassicDesktopLifetime(argv) |> ignore
+    AppBuilder.Configure<App>().UsePlatformDetect().LogToDebug(Logging.LogEventLevel.Debug).StartWithClassicDesktopLifetime(argv) |> ignore
     let columnDefinitions = 
         [
             {

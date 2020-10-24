@@ -6,12 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="DataSource.fs" />
     <Compile Include="DynamicTable.axaml.fs" />
     <Compile Include="MainWindow.axaml.fs" />
     <Compile Include="App.fs" />
     <Compile Include="Program.fs" />
-    <PackageReference Include="Avalonia" Version="0.9.11" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.9.11" />
+    <PackageReference Include="Avalonia" Version="0.10.0-preview5" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview5" />
   </ItemGroup>
 
 </Project>

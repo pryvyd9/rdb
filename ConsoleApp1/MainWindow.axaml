@@ -6,5 +6,11 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="ConsoleApp1.MainWindow"
         Title="ConsoleApp1">
-
+  <DockPanel>
+    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+      <Button Name="loadButton" Width="50">Load</Button>
+      <local:DynamicTable Name="filter"/>
+    </StackPanel>
+    <local:DynamicTable Name="table" DockPanel.Dock="Bottom"/>
+  </DockPanel>
 </Window>
