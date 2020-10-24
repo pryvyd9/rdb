@@ -1,4 +1,4 @@
-﻿open ConsoleApp1
+﻿open l2
 open Avalonia;
 //open Avalonia.Logging.Serilog;
 

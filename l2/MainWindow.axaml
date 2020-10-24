@@ -2,9 +2,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ConsoleApp1"
+        xmlns:local="clr-namespace:l2"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="ConsoleApp1.MainWindow"
+        x:Class="l2.MainWindow"
         Title="ConsoleApp1">
   <DockPanel>
     <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">

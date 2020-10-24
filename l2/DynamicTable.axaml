@@ -3,13 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="ConsoleApp1.DynamicTable">
+             x:Class="l2.DynamicTable">
   <Grid RowDefinitions="20,Auto">
       <ScrollViewer Name="headerScrollViewer" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Hidden"> 
         <Grid ColumnDefinitions="Auto,18">
-    <!--<Border Name="headerBorder" BorderThickness="0,1,0,1" BorderBrush="Black" Height="20" >-->
           <Grid Name="headerGrid"/>
-    <!--</Border>-->
         </Grid>
       </ScrollViewer>
     <ScrollViewer Name="itemScrollViewer" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.Row="1">
