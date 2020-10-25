@@ -23,6 +23,9 @@ type DynamicTable(showScrollBars) as this =
     let defaultRowHeight = 18.
     let gridSplitterThickness = 1.
 
+    let getItemCount:unit->int = fun () -> 0
+    let mutable items:(unit->obj) option [] List = []
+
     do
         let p = ScrollViewer.HorizontalScrollBarValueProperty
         hsv.Bind(p, isv.GetObservable(p)) |> ignore
@@ -129,14 +132,18 @@ type DynamicTable(showScrollBars) as this =
             itemGrid.RowDefinitions.Add(RowDefinition())
           
     let createTable rowCount headers =
-        let columnCount = List.length headers + 1
+        let columnCount = List.length headers
+        items <- List.init rowCount (fun _ -> Array.init columnCount (fun _ -> None)) 
+
+        let columnCount = columnCount + 1
         createColumns rowCount columnCount
         createHeaders headers
         createRows rowCount columnCount
 
     let setColumnValues (columnIndex,(def:Column,values)) =
         for rowIndex,value in List.indexed values do
-            createTextBox itemGrid (rowIndex*2) (columnIndex*2+2) (def.toString value) |> ignore
+            let a = createTextBox itemGrid (rowIndex*2) (columnIndex*2+2) (def.toString value)
+            items.[rowIndex].[columnIndex] <- Some (fun () -> def.toValue a.Text) 
 
     let clear() =
         itemGrid.Children.Clear()
@@ -159,6 +166,7 @@ type DynamicTable(showScrollBars) as this =
         then
             items |> List.transpose |> List.zip columns |> List.indexed |> List.iter setColumnValues
             
+    member _.GetItems() = items |> List.map (fun a -> a |> Array.map (function Some b -> b() | None -> null))
     member _.OnItemUpdated 
         with get() = onItemUpdated 
         and set(v) = onItemUpdated <- v

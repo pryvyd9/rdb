@@ -11,36 +11,21 @@ open Avalonia.Input
 type MainWindow() as this =
     inherit Window()
 
-    let getData() =
-        let columnDefinitions = 
-            [
-                {
-                    name = "col1"
-                    validate = fun _ -> None
-                    toString = string
-                    toValue = fun a -> box a 
-                }
-                {
-                    name = "col2"
-                    validate = fun _ -> None
-                    toString = string
-                    toValue = fun a -> box a 
-                }
-            ]
-
-        let items = [["0:0"; "0:1"];["1:0";"1:1"];["2:0";"2:1"]]
-        let items = items |> List.map (List.map box)
-        columnDefinitions, items
-
     do 
         AvaloniaXamlLoader.Load(this)
-        let columnDefinitions, items = getData()
+        let dataSource = DataSource.testTable
 
         this.FindControl<Button>("loadButton").Click.AddHandler(fun _ _ -> 
-            this.FindControl<DynamicTable>("table").SetItems columnDefinitions items
+            let items = DataSource.load dataSource []
+            this.FindControl<DynamicTable>("table").SetItems dataSource.columns items
+        )
+        this.FindControl<Button>("testButton").Click.AddHandler(fun _ _ -> 
+            let table = this.FindControl<DynamicTable>("table")
+            let items = table.GetItems()
+            ()
         )
         let filter = this.FindControl<DynamicTable>("filter")
-        filter.SetItems columnDefinitions [(columnDefinitions |> List.map (fun _ -> box ""))]
+        filter.SetItems dataSource.columns [(dataSource.columns |> List.map (fun _ -> box ""))]
         filter.HorizontalScrollBarVisibility <- Primitives.ScrollBarVisibility.Auto
         filter.VerticalScrollBarVisibility <- Primitives.ScrollBarVisibility.Disabled
 
