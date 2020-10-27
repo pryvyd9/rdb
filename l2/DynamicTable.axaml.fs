@@ -23,8 +23,8 @@ type DynamicTable(showScrollBars) as this =
     let defaultRowHeight = 18.
     let gridSplitterThickness = 1.
 
-    let getItemCount:unit->int = fun () -> 0
     let mutable items:(unit->obj option) option [] List = []
+    let mutable itemsString:(unit->string) [] List = []
 
     do
         let p = ScrollViewer.HorizontalScrollBarValueProperty
@@ -40,7 +40,7 @@ type DynamicTable(showScrollBars) as this =
         a.BorderThickness <- Thickness()
         a.Padding <- Thickness()
         a.Margin <- Thickness(1.)
-        a.GetObservable(TextBox.TextProperty).Subscribe(fun a -> onItemUpdated row column a) |> ignore
+        a.GetObservable(TextBox.TextProperty).Subscribe(fun a -> onItemUpdated (row/2) (column/2) a) |> ignore
         grid.Children.Add(a)
         a
 
@@ -105,8 +105,9 @@ type DynamicTable(showScrollBars) as this =
             createVerticalGridSplitter headersGrid (c.GetValue<int>(Grid.ColumnProperty)) 3
         
         for i,h in List.indexed headers do
-            createTextBox headersGrid 1 (i*2+2) h.name |> ignore
-
+            let a = createTextBox headersGrid 1 (i*2+2) h.name
+            a.IsReadOnly <- true
+            a.CaretBrush <- Brushes.Transparent
 
     let createRows rowCount columnCount =
         let createRowIndex rowIndex =
@@ -134,6 +135,7 @@ type DynamicTable(showScrollBars) as this =
     let createTable rowCount headers =
         let columnCount = List.length headers
         items <- List.init rowCount (fun _ -> Array.init columnCount (fun _ -> None)) 
+        itemsString <- List.init rowCount (fun _ -> Array.init columnCount (fun _ -> fun _ -> String.Empty)) 
 
         let columnCount = columnCount + 1
         createColumns rowCount columnCount
@@ -144,6 +146,7 @@ type DynamicTable(showScrollBars) as this =
         for rowIndex,value in values |> List.map Some |> List.indexed do
             let a = createTextBox itemGrid (rowIndex*2) (columnIndex*2+2) (def.toString value)
             items.[rowIndex].[columnIndex] <- Some (fun () -> def.toValue a.Text) 
+            itemsString.[rowIndex].[columnIndex] <- fun () -> a.Text
 
     let clear() =
         itemGrid.Children.Clear()
@@ -167,6 +170,7 @@ type DynamicTable(showScrollBars) as this =
             items |> List.transpose |> List.zip columns |> List.indexed |> List.iter setColumnValues
             
     member _.GetItems() = items |> List.map (fun a -> a |> Array.map (function Some b -> b() | _ -> None))
+    member _.GetItemsString() = itemsString |> List.map (fun a -> a |> Array.map (fun b -> b()))
     member _.OnItemUpdated 
         with get() = onItemUpdated 
         and set(v) = onItemUpdated <- v

@@ -16,7 +16,8 @@ type MainWindow() as this =
         let dataSource = DataSource.warehouseTable
         let mutable filter:(Column*obj option) list = []
 
-        this.FindControl<Button>("loadButton").Click.AddHandler(fun _ _ -> 
+        let loadButton = this.FindControl<Button>("loadButton")
+        loadButton.Click.AddHandler(fun _ _ -> 
             let items = DataSource.load dataSource filter
             this.FindControl<DynamicTable>("table").SetItems dataSource.columns items
         )
@@ -26,5 +27,11 @@ type MainWindow() as this =
         filterTable.HorizontalScrollBarVisibility <- Primitives.ScrollBarVisibility.Auto
         filterTable.VerticalScrollBarVisibility <- Primitives.ScrollBarVisibility.Disabled
         filterTable.OnItemUpdated <-
-            fun _ _ _ -> filter <- List.zip dataSource.columns.Tail (filterTable.GetItems().Head |> List.ofArray)
-
+            fun _ j v -> 
+                let nf = List.zip dataSource.columns.Tail (filterTable.GetItemsString().Head |> List.ofArray)
+                if nf |> List.forall (fun (c,v) -> String.IsNullOrWhiteSpace v || v |> c.toValue |> Option.isSome)
+                then 
+                    loadButton.IsEnabled <- true
+                    filter <- List.zip dataSource.columns.Tail (filterTable.GetItems().Head |> List.ofArray)
+                else
+                    loadButton.IsEnabled <- false

@@ -23,11 +23,13 @@ module Column =
     }
     let int = {
         string with
+            toValue = Int32.TryParse >> function true,v -> v |> box |> Some  | _ -> None
             dbToValue = fun a -> a.GetInt32 >> box
             toFilter = sprintf "= %s"
     }
     let float32 ={
         string with
+            toValue = Double.TryParse >> function true,v -> v |> box |> Some  | _ -> None
             dbToValue = fun a -> a.GetDouble >> box
             toFilter = sprintf "= %s"
     }
