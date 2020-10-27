@@ -2,9 +2,11 @@
 
 open System
 open Npgsql
+open System.Collections.Generic
 
 type Column = {
     name:string
+    displayName:string
     validate:string->string option
     toValue:string->obj option
     toString:obj option->string
@@ -14,7 +16,8 @@ type Column = {
 
 module Column =
     let string = {
-        name = String.Empty
+        name = null
+        displayName = null
         validate = fun _ -> None
         toString = function Some s -> string s | _ -> String.Empty
         toValue = fun s -> if String.IsNullOrWhiteSpace s then None else s |> box |> Some
@@ -27,7 +30,7 @@ module Column =
             dbToValue = fun a -> a.GetInt32 >> box
             toFilter = sprintf "= %s"
     }
-    let float32 ={
+    let float32 = {
         string with
             toValue = Double.TryParse >> function true,v -> v |> box |> Some  | _ -> None
             dbToValue = fun a -> a.GetDouble >> box
@@ -37,19 +40,27 @@ module Column =
 
 type DataSource = {
     columns:Column list
+    commands:IDictionary<string,string>
 }
 
 module DataSource =
     let warehouseTable = {
         columns = [
-            { Column.string with name = "dbSource" }
+            { Column.string with name = "dbSource"; displayName = "Source" }
             { Column.int with name = "id" }
             { Column.int with name = "item_id" }
             { Column.float32 with name = "quantity" }
         ]
+        commands = dict [
+            "select", "select * from (SELECT 'db2' dbSource, * FROM public.dblink 
+                   ('demodbrnd','select * from public.warehouse')
+                   AS DATA(id int, item_id int, quantity float) 
+                   union all
+                   select 'db1' dbSource, * from public.warehouse) a"
+        ]
     }
 
-    let load (dataSource:DataSource) (filter:(Column*obj option)list) =
+    let select (dataSource:DataSource) (filter:(Column*obj option)list) =
         let filter = 
             let nonNoneFilter = filter |> List.filter (snd >> Option.isSome)
             if List.isEmpty nonNoneFilter then String.Empty
@@ -59,11 +70,7 @@ module DataSource =
         conn.Open()
                
         use command = conn.CreateCommand()
-        command.CommandText <- "SELECT 'db2' f, * FROM public.dblink 
-        ('demodbrnd','select * from public.warehouse')
-        AS DATA(id int, item_id int, quantity float)" + filter +
-        "union all
-        select 'db1' f, * from public.warehouse" + filter + ";"
+        command.CommandText <- dataSource.commands.["select"] + filter + ";"
 
         use reader = command.ExecuteReader()
                

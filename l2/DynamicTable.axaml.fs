@@ -2,16 +2,13 @@
 
 open System
 open Avalonia
-//open Avalonia.Logging.Serilog
-open Avalonia.Controls.ApplicationLifetimes
 open Avalonia.Markup.Xaml
 open Avalonia.Controls
 open Avalonia.Media
-open Avalonia.Data
 
 
 
-type DynamicTable(showScrollBars) as this =
+type DynamicTable() as this =
     inherit UserControl()
     do AvaloniaXamlLoader.Load(this)
 
@@ -105,7 +102,7 @@ type DynamicTable(showScrollBars) as this =
             createVerticalGridSplitter headersGrid (c.GetValue<int>(Grid.ColumnProperty)) 3
         
         for i,h in List.indexed headers do
-            let a = createTextBox headersGrid 1 (i*2+2) h.name
+            let a = createTextBox headersGrid 1 (i*2+2) (match h.displayName with null -> h.name | a -> a)
             a.IsReadOnly <- true
             a.CaretBrush <- Brushes.Transparent
 
@@ -155,8 +152,6 @@ type DynamicTable(showScrollBars) as this =
         headersGrid.Children.Clear()
         headersGrid.ColumnDefinitions.Clear()
         headersGrid.RowDefinitions.Clear()
-
-    new() = DynamicTable(true)
 
     member _.SetItems (columns:Column list) (items:obj list list) =
         clear() 
