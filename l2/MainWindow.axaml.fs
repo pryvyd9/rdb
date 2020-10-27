@@ -23,7 +23,7 @@ type MainWindow() as this =
         filterTable.HorizontalScrollBarVisibility <- Primitives.ScrollBarVisibility.Auto
         filterTable.VerticalScrollBarVisibility <- Primitives.ScrollBarVisibility.Disabled
         filterTable.OnItemUpdated <-
-            fun _ j v -> 
+            fun _ _ _ -> 
                 let nf = List.zip dataSource.columns (filterTable.GetItemsString().Head |> List.ofArray)
                 if nf |> List.forall (fun (c,v) -> String.IsNullOrWhiteSpace v || v |> c.toValue |> Option.isSome)
                 then 

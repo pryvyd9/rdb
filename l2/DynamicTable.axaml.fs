@@ -115,7 +115,7 @@ type DynamicTable() as this =
 
         for i in 0..rowCount-1 do
             itemGrid.RowDefinitions.Add(RowDefinition(defaultRowHeight, GridUnitType.Pixel))
-            createRowIndex i
+            createRowIndex i |> ignore
 
             itemGrid.RowDefinitions.Add(RowDefinition(gridSplitterThickness, GridUnitType.Pixel))
             let a = GridSplitter()
