@@ -13,20 +13,18 @@ type MainWindow() as this =
 
     do 
         AvaloniaXamlLoader.Load(this)
-        let dataSource = DataSource.testTable
+        let dataSource = DataSource.warehouseTable
+        let mutable filter:(Column*obj option) list = []
 
         this.FindControl<Button>("loadButton").Click.AddHandler(fun _ _ -> 
-            let items = DataSource.load dataSource []
+            let items = DataSource.load dataSource filter
             this.FindControl<DynamicTable>("table").SetItems dataSource.columns items
         )
-        this.FindControl<Button>("testButton").Click.AddHandler(fun _ _ -> 
-            let table = this.FindControl<DynamicTable>("table")
-            let items = table.GetItems()
-            ()
-        )
-        let filter = this.FindControl<DynamicTable>("filter")
-        filter.SetItems dataSource.columns [(dataSource.columns |> List.map (fun _ -> box ""))]
-        filter.HorizontalScrollBarVisibility <- Primitives.ScrollBarVisibility.Auto
-        filter.VerticalScrollBarVisibility <- Primitives.ScrollBarVisibility.Disabled
 
+        let filterTable = this.FindControl<DynamicTable>("filter")
+        filterTable.SetItems dataSource.columns.Tail [(dataSource.columns.Tail |> List.map (fun _ -> box ""))]
+        filterTable.HorizontalScrollBarVisibility <- Primitives.ScrollBarVisibility.Auto
+        filterTable.VerticalScrollBarVisibility <- Primitives.ScrollBarVisibility.Disabled
+        filterTable.OnItemUpdated <-
+            fun _ _ _ -> filter <- List.zip dataSource.columns.Tail (filterTable.GetItems().Head |> List.ofArray)
 

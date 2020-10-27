@@ -9,7 +9,6 @@
   <DockPanel>
     <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
       <Button Name="loadButton" Width="50">Load</Button>
-      <Button Name="testButton" Width="50">Test</Button>
       <local:DynamicTable Name="filter"/>
     </StackPanel>
     <local:DynamicTable Name="table" DockPanel.Dock="Bottom"/>
