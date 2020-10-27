@@ -11,6 +11,6 @@
       <Button Name="loadButton" Width="50">Load</Button>
       <local:DynamicTable Name="filter"/>
     </StackPanel>
-    <local:DynamicTable Name="table" DockPanel.Dock="Bottom"/>
+    <local:DynamicTable Name="table" DockPanel.Dock="Bottom" IsReadOnly="True"/>
   </DockPanel>
 </Window>

@@ -22,6 +22,7 @@ type DynamicTable() as this =
 
     let mutable items:(unit->obj option) option [] List = []
     let mutable itemsString:(unit->string) [] List = []
+    let mutable isReadOnly:bool = false
 
     do
         let p = ScrollViewer.HorizontalScrollBarValueProperty
@@ -29,7 +30,7 @@ type DynamicTable() as this =
 
     let mutable onItemUpdated:(int->int->string->unit) = (fun i j v -> ())
 
-    let createTextBox (grid:Grid) row column text =
+    let createTextBox (grid:Grid) row column text isReadOnly =
         let a = TextBox()
         a.SetValue(Grid.ColumnProperty, column) |> ignore
         a.SetValue(Grid.RowProperty, row) |> ignore
@@ -37,6 +38,10 @@ type DynamicTable() as this =
         a.BorderThickness <- Thickness()
         a.Padding <- Thickness()
         a.Margin <- Thickness(1.)
+        if isReadOnly
+        then 
+            a.IsReadOnly <- true
+            a.CaretBrush <- Brushes.Transparent
         a.GetObservable(TextBox.TextProperty).Subscribe(fun a -> onItemUpdated (row/2) (column/2) a) |> ignore
         grid.Children.Add(a)
         a
@@ -102,15 +107,11 @@ type DynamicTable() as this =
             createVerticalGridSplitter headersGrid (c.GetValue<int>(Grid.ColumnProperty)) 3
         
         for i,h in List.indexed headers do
-            let a = createTextBox headersGrid 1 (i*2+2) (match h.displayName with null -> h.name | a -> a)
-            a.IsReadOnly <- true
-            a.CaretBrush <- Brushes.Transparent
+            createTextBox headersGrid 1 (i*2+2) (match h.displayName with null -> h.name | a -> a) true |> ignore
 
     let createRows rowCount columnCount =
         let createRowIndex rowIndex =
-            let a = createTextBox itemGrid (rowIndex*2) 0 (string rowIndex)
-            a.IsReadOnly <- true
-            a.CaretBrush <- Brushes.Transparent
+            createTextBox itemGrid (rowIndex*2) 0 (string rowIndex) true
 
         for i in 0..rowCount-1 do
             itemGrid.RowDefinitions.Add(RowDefinition(defaultRowHeight, GridUnitType.Pixel))
@@ -141,7 +142,7 @@ type DynamicTable() as this =
 
     let setColumnValues (columnIndex,(def:Column,values)) =
         for rowIndex,value in values |> List.map Some |> List.indexed do
-            let a = createTextBox itemGrid (rowIndex*2) (columnIndex*2+2) (def.toString value)
+            let a = createTextBox itemGrid (rowIndex*2) (columnIndex*2+2) (def.toString value) isReadOnly
             items.[rowIndex].[columnIndex] <- Some (fun () -> def.toValue a.Text) 
             itemsString.[rowIndex].[columnIndex] <- fun () -> a.Text
 
@@ -166,6 +167,9 @@ type DynamicTable() as this =
             
     member _.GetItems() = items |> List.map (fun a -> a |> Array.map (function Some b -> b() | _ -> None))
     member _.GetItemsString() = itemsString |> List.map (fun a -> a |> Array.map (fun b -> b()))
+    member _.IsReadOnly 
+        with get() = isReadOnly 
+        and set(v) = isReadOnly <- v
     member _.OnItemUpdated 
         with get() = onItemUpdated 
         and set(v) = onItemUpdated <- v
