@@ -9,25 +9,25 @@ type MainWindow() as this =
 
     do 
         AvaloniaXamlLoader.Load(this)
-        let dataSource = DataSource.warehouseTable
-        let mutable filter:(Column*obj option) list = []
+        let warehouseTable = {
+               columns = [
+                   { Column.string with name = "dbSource"; displayName = "Source" }
+                   { Column.int with name = "id" }
+                   { Column.int with name = "item_id" }
+                   { Column.float32 with name = "quantity" }
+               ]
+               name = "warehouse"
+           }
+
+        let mutable dataView:DataView = warehouseTable
+
+        let viewEditor = this.FindControl<ViewEditor>("viewEditor")
+        viewEditor.SetColumns dataView.columns
+
 
         let loadButton = this.FindControl<Button>("loadButton")
         loadButton.Click.AddHandler(fun _ _ -> 
-            let items = DataSource.select dataSource filter
-            this.FindControl<DynamicTable>("table").SetItems dataSource.columns items
+            let items = DataView.select {dataView with columns = viewEditor.Columns}
+            let columnsToDisplay = viewEditor.Columns |> List.filter (fun a -> a.shouldSelect)
+            this.FindControl<DynamicTable>("table").SetItems columnsToDisplay items
         )
-
-        let filterTable = this.FindControl<DynamicTable>("filter")
-        filterTable.SetItems dataSource.columns [(dataSource.columns |> List.map (fun _ -> box ""))]
-        filterTable.HorizontalScrollBarVisibility <- Primitives.ScrollBarVisibility.Auto
-        filterTable.VerticalScrollBarVisibility <- Primitives.ScrollBarVisibility.Disabled
-        filterTable.OnItemUpdated <-
-            fun _ _ _ -> 
-                let nf = List.zip dataSource.columns (filterTable.GetItemsString().Head |> List.ofArray)
-                if nf |> List.forall (fun (c,v) -> String.IsNullOrWhiteSpace v || v |> c.toValue |> Option.isSome)
-                then 
-                    loadButton.IsEnabled <- true
-                    filter <- List.zip dataSource.columns (filterTable.GetItems().Head |> List.ofArray)
-                else
-                    loadButton.IsEnabled <- false

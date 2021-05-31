@@ -7,10 +7,12 @@
         x:Class="l2.MainWindow"
         Title="ConsoleApp1">
   <DockPanel>
-    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-      <Button Name="loadButton" Width="50">Load</Button>
-      <local:DynamicTable Name="filter"/>
-    </StackPanel>
+    <local:ViewEditor Name="viewEditor" DockPanel.Dock="Top"/>
+      <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+    <Button Name="loadButton" Width="50"  >Load</Button>
+        
+      </StackPanel>
+      
     <local:DynamicTable Name="table" DockPanel.Dock="Bottom" IsReadOnly="True"/>
   </DockPanel>
 </Window>
