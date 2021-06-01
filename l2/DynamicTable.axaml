@@ -5,12 +5,12 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="l2.DynamicTable">
   <Grid RowDefinitions="20,Auto">
-      <ScrollViewer Name="headerScrollViewer" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Hidden"> 
-        <Grid ColumnDefinitions="Auto,18">
-          <Grid Name="headerGrid"/>
-        </Grid>
-      </ScrollViewer>
-    <ScrollViewer Name="itemScrollViewer" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.Row="1">
+    <ScrollViewer Name="headerScrollViewer" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Hidden"> 
+      <Grid ColumnDefinitions="Auto,18">
+        <Grid Name="headerGrid"/>
+      </Grid>
+    </ScrollViewer>
+    <ScrollViewer Name="itemScrollViewer" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.Row="1"  MaxHeight="500">
       <Grid Name="itemGrid"/>
     </ScrollViewer>
   </Grid>

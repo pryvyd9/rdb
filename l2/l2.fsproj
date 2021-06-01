@@ -6,14 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Infrastracture.fs" />
     <Compile Include="DataSource.fs" />
     <Compile Include="ViewEditor.axaml.fs" />
     <Compile Include="DynamicTable.axaml.fs" />
     <Compile Include="MainWindow.axaml.fs" />
     <Compile Include="App.fs" />
     <Compile Include="Program.fs" />
-    <PackageReference Include="Avalonia" Version="0.10.0-preview5" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview5" />
+    <PackageReference Include="Avalonia" Version="0.10.5" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.5" />
     <PackageReference Include="Npgsql" Version="5.0.0-preview1" />
   </ItemGroup>
 

@@ -6,13 +6,16 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="l2.MainWindow"
         Title="ConsoleApp1">
-  <DockPanel>
-    <local:ViewEditor Name="viewEditor" DockPanel.Dock="Top"/>
-      <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-    <Button Name="loadButton" Width="50"  >Load</Button>
-        
+  <StackPanel>
+    <local:ViewEditor Name="viewEditor"/>
+    <Grid ColumnDefinitions="200,*" >
+      <ListBox Name="viewList" Grid.Column="0" />
+      <StackPanel  Grid.Column="1">
+        <StackPanel Orientation="Horizontal">
+          <Button Name="loadButton" Width="50"  >Load</Button>
+        </StackPanel>
+        <local:DynamicTable Name="table" IsReadOnly="True"  />
       </StackPanel>
-      
-    <local:DynamicTable Name="table" DockPanel.Dock="Bottom" IsReadOnly="True"/>
-  </DockPanel>
+    </Grid>
+  </StackPanel>
 </Window>
